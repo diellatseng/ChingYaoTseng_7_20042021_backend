@@ -1,5 +1,8 @@
-const express = require('express');
-const router = express.Router();
+const router = require('express').Router();
+
+router.get('/', async(req, res, next) => {
+    res.send({ message: 'user routes'});
+})
 
 // const userCtrl = require('../controllers/user');
 
@@ -8,9 +11,3 @@ const router = express.Router();
 
 
 module.exports = router;
-
-// const express = require('express');
-// const router = express.Router();
-
-
-// module.exports = router;
