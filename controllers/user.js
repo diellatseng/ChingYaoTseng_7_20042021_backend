@@ -1,7 +1,10 @@
-const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+
+exports.signup = (req, res) => {
+    res.send({ message: 'Sign up is here'});
+}
 
 // exports.signup = (req, res) => {
 //     if (/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/.test(req.body.password)) {
