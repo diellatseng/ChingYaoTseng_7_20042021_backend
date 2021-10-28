@@ -3,6 +3,35 @@ const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient()
 
+
+/* Create a post */
+exports.createPost = async (req, res, next) => {
+    var post = {
+        title: req.body.title,
+        authorId: Number(req.body.authorId),
+    }
+
+    if (req.body.message !== undefined && req.body.message !== "") {
+        post = {
+            ...post,
+            message: req.body.message
+        };
+    }
+
+    if (req.file) {
+        post = {
+            ...post,
+            imgURL: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        };
+    }
+
+    console.log(post);
+    const createdPost = await prisma.post.create({
+        data: post,
+    }).then(() => res.status(201).json({message: 'Le Post a bien été créée'}))
+        .catch(error => res.status(400).json({message: error.message, data: post}));
+}
+
 // Get all posts //
 exports.getAllPosts = async (req, res, next) => {
     const posts = await prisma.post.findMany({
@@ -10,15 +39,16 @@ exports.getAllPosts = async (req, res, next) => {
             created_at: 'desc',
         },
         include:{
-            comment: true,
+            author: true,
+            comments: true,
+            likes: true,
             _count: {
                 select: {
-                    comment: true,
-                    like: true
+                    comments: true,
+                    likes: true
                 }
             }
         },
-        
     })
     .then(posts => res.status(200).json(posts))
     .catch(error => res.status(404).json({ message: error.message }));
