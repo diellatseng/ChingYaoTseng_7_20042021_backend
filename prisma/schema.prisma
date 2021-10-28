@@ -7,58 +7,58 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model comments {
+model comment {
   id         Int      @id @default(autoincrement())
   content    String   @db.Text
   author_id  Int
   post_id    Int
   created_at DateTime @db.DateTime(0)
-  users      users    @relation(fields: [author_id], references: [id], onDelete: Cascade, map: "comments_ibfk_1")
-  posts      posts    @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "comments_ibfk_2")
+  user       user     @relation(fields: [author_id], references: [id], onDelete: Cascade, map: "comment_ibfk_1")
+  post       post     @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "comment_ibfk_2")
 
-  @@index([author_id], map: "comments_author_id_index")
-  @@index([post_id], map: "comments_post_id_index")
+  @@index([author_id], map: "comment_author_id_index")
+  @@index([post_id], map: "comment_post_id_index")
 }
 
-model likes {
-  id        Int   @id @default(autoincrement())
+model like {
+  id        Int  @id @default(autoincrement())
   author_id Int
   target_id Int
-  users     users @relation(fields: [author_id], references: [id], onDelete: Cascade, map: "likes_ibfk_1")
-  posts     posts @relation(fields: [target_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "likes_ibfk_2")
+  user      user @relation(fields: [author_id], references: [id], onDelete: Cascade, map: "like_ibfk_1")
+  post      post @relation(fields: [target_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "like_ibfk_2")
 
-  @@index([author_id], map: "likes_author_id_index")
-  @@index([target_id], map: "likes_target_id_index")
+  @@index([author_id], map: "like_author_id_index")
+  @@index([target_id], map: "like_target_id_index")
 }
 
-model posts {
-  id             Int        @id @default(autoincrement())
-  content        String     @db.Text
+model post {
+  id             Int       @id @default(autoincrement())
+  content        String    @db.Text
   author_id      Int
-  created_at     DateTime   @db.DateTime(0)
+  created_at     DateTime  @db.DateTime(0)
   likes_count    Int?
   comments_count Int?
   img_url        Int?
-  users          users      @relation(fields: [author_id], references: [id], map: "posts_ibfk_1")
-  comments       comments[]
-  likes          likes[]
+  user           user      @relation(fields: [author_id], references: [id], map: "post_ibfk_1")
+  comment        comment[]
+  like           like[]
 
-  @@index([author_id], map: "posts_author_id_index")
+  @@index([author_id], map: "post_author_id_index")
 }
 
-model users {
-  id        Int        @id @default(autoincrement())
-  full_name String     @db.VarChar(255)
-  email     String     @unique(map: "email") @db.VarChar(255)
-  password  String     @db.VarChar(255)
-  role      Role       @default(USER)
-  img_url   String?    @db.VarChar(255)
-  comments  comments[]
-  likes     likes[]
-  posts     posts[]
+model user {
+  id        Int       @id @default(autoincrement())
+  full_name String    @db.VarChar(255)
+  email     String    @unique(map: "email") @db.VarChar(255)
+  password  String    @db.VarChar(255)
+  role      user_role @default(USER)
+  img_url   String?   @db.VarChar(255)
+  comment   comment[]
+  like      like[]
+  post      post[]
 }
 
-enum Role {
+enum user_role {
   USER
   ADMIN
 }
