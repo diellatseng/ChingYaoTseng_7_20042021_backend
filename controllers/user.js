@@ -1,9 +1,22 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const mysql = require('mysql');
 
 
-exports.signup = (req, res) => {
-    res.send({ message: 'Sign up is here'});
+// exports.signup = (req, res) => {
+//     res.send({ message: 'Sign up is here'});
+// }
+
+exports.signup = async (req, res) => {
+
+    const result = await prisma.user.create({
+        data: {
+            full_name,
+            email,
+            password
+        } 
+    })
+    res.json(result)
 }
 
 // exports.signup = (req, res) => {

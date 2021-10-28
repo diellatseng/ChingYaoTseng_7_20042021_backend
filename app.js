@@ -18,8 +18,6 @@ app.use(helmet());                                              // Secure HTTP h
 app.use(express.json());                                        // Parsing incoming requests with JSON payloads by using the express embedded functions
 app.use(express.urlencoded({ extended: true }));
 
-
-
 app.get('/', async(req, res, next) => {
     res.send({ message: 'Server is now running.'});
 })
