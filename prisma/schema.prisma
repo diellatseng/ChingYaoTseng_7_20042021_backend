@@ -12,7 +12,7 @@ model comment {
   content    String   @db.Text
   author_id  Int
   post_id    Int
-  created_at DateTime @db.DateTime(0)
+  created_at DateTime @default(now()) @db.DateTime(0)
   user       user     @relation(fields: [author_id], references: [id], onDelete: Cascade, map: "comment_ibfk_1")
   post       post     @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "comment_ibfk_2")
 
@@ -35,7 +35,7 @@ model post {
   id             Int       @id @default(autoincrement())
   content        String    @db.Text
   author_id      Int
-  created_at     DateTime  @db.DateTime(0)
+  created_at     DateTime  @default(now()) @db.DateTime(0)
   likes_count    Int?
   comments_count Int?
   img_url        Int?
