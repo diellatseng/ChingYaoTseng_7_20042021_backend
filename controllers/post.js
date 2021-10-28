@@ -6,9 +6,8 @@ const prisma = new PrismaClient()
 
 /* Create a post */
 exports.createPost = async (req, res, next) => {
-    var post = {
-        title: req.body.title,
-        authorId: Number(req.body.authorId),
+    let post = {
+        author_id: Number(req.body.author_id),
     }
 
     if (req.body.message !== undefined && req.body.message !== "") {
@@ -18,18 +17,19 @@ exports.createPost = async (req, res, next) => {
         };
     }
 
-    if (req.file) {
-        post = {
-            ...post,
-            imgURL: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        };
-    }
+    // if (req.file) {
+    //     post = {
+    //         ...post,
+    //         imgURL: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    //     };
+    // }
 
     console.log(post);
     const createdPost = await prisma.post.create({
         data: post,
-    }).then(() => res.status(201).json({message: 'Le Post a bien été créée'}))
-        .catch(error => res.status(400).json({message: error.message, data: post}));
+    })
+    .then(() => res.status(201).json({message: 'The post has been created'}))
+    .catch(error => res.status(400).json({message: error.message, data: post}));
 }
 
 // Get all posts //

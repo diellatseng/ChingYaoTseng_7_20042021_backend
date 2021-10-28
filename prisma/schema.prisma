@@ -12,7 +12,7 @@ model comment {
   content    String   @db.Text
   author_id  Int
   post_id    Int
-  created_at DateTime @default(now()) @db.Timestamp(6)
+  created_at DateTime?@default(now()) @db.Timestamp(6)
   author     user     @relation(fields: [author_id], references: [id], map: "comment_ibfk_1")
   post       post     @relation(fields: [post_id], references: [id], map: "comment_ibfk_2")
 
@@ -35,9 +35,9 @@ model post {
   id         Int       @id @default(autoincrement())
   content    String    @db.Text
   author_id  Int
-  created_at DateTime  @default(now()) @db.Timestamp(6)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
   img_url    String?   @db.VarChar(255)
-  author      user      @relation(fields: [author_id], references: [id], map: "post_ibfk_1")
+  author      user     @relation(fields: [author_id], references: [id], map: "post_ibfk_1")
   comments    comment[]
   likes       like[]
 
