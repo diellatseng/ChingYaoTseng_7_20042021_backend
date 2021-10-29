@@ -29,6 +29,21 @@ exports.signup = (req, res, next) => {
     }
 };
 
+exports.login = (req, res, next) => {
+    console.log(req.body);
+
+    let email = req.body.email;
+    let password = req.body.password;
+    let sqlInserts = [email];
+    userModels.login(sqlInserts, password)
+        .then((response) =>{
+            res.status(200).json(JSON.stringify(response))
+        })
+        .catch((error) =>{
+            res.status(400).json(error)
+        })
+}
+
 // exports.login = (req, res) => {
 //     User.findOne({ email: req.body.email })
 //         .then(user => {

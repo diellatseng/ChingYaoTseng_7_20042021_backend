@@ -19,6 +19,7 @@ class UserModels {
     login(sqlInserts, password){
         let sql = 'SELECT * FROM user WHERE email = ?';
         sql = mysql.format(sql, sqlInserts);
+        console.log('into model');
         
         return new Promise((resolve, reject) =>{
             connectdb.query(sql, function(err, result){
@@ -34,7 +35,7 @@ class UserModels {
                                 token: jwt.sign(
                                     { userId: result[0].id,
                                     moderation: result[0].moderation },
-                                    'RANDOM_TOKEN_SECRET',
+                                    process.env.TOKEN_SECRET,
                                     { expiresIn: '24h' } 
                                 ),
                                 moderation: result[0].moderation
