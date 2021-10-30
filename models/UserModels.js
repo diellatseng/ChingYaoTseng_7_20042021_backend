@@ -4,14 +4,14 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 class UserModels {
-    constructor() {
-    }
+    // constructor() {
+    // }
     register(sqlInserts) {
         let sql = 'INSERT INTO user (`full_name`, `email`, `password`) VALUES( ?, ?, ?)';
         sql = mysql.format(sql, sqlInserts);
         return new Promise((resolve, reject) => {
             connectdb.query(sql, function (err, result) {
-                if (err) reject({ error: 'Erreur dans l\'inscription' });
+                if (err) reject({ error: 'Register error!' });
                 resolve({ message: 'New User created!' })
             })
         })
@@ -29,7 +29,7 @@ class UserModels {
                 } else {
                     bcrypt.compare(password, result[0].password)
                         .then(valid => {
-                            if (!valid) return reject({ error: 'Mot de passe incorrect !' });
+                            if (!valid) return reject({ error: 'Password incorrect!' });
                             resolve({
                                 userId: result[0].id,
                                 token: jwt.sign(
