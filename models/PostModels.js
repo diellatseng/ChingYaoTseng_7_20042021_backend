@@ -14,7 +14,7 @@ class PostModels {
     // }
 
     createPost(sqlInserts) {
-        console.log('into model...')
+        console.log('into post model...')
         let sql = 'INSERT INTO post (`content`, `author_id`, `img_url`) VALUES( ?, ?, ?)';
         sql = mysql.format(sql, sqlInserts);
         return new Promise((resolve) => {

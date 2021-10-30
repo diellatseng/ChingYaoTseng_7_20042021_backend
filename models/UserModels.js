@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 class UserModels {
+    constructor() {
+    }
 
     register(sqlInserts) {
         let sql = 'INSERT INTO user (`full_name`, `email`, `password`) VALUES( ?, ?, ?)';
@@ -14,11 +16,11 @@ class UserModels {
                 resolve({ message: 'New User created!' })
             })
         })
-    }
+    };
+
     login(sqlInserts, password) {
         let sql = 'SELECT * FROM user WHERE email = ?';
         sql = mysql.format(sql, sqlInserts);
-        console.log('into model');
 
         return new Promise((resolve, reject) => {
             connectdb.query(sql, function (err, result) {
@@ -26,20 +28,16 @@ class UserModels {
                 if (!result[0]) {
                     reject({ error: 'User not found!' });
                 } else {
-                    bcrypt.compare(password, result[0].password)
-                        .then(valid => {
+                    bcrypt.compare(password, result[0].password) 
+                        .then(valid => { 
                             if (!valid) return reject({ error: 'Password incorrect!' });
                             resolve({
                                 userId: result[0].id,
                                 token: jwt.sign(
-                                    {
-                                        userId: result[0].id,
-                                        moderation: result[0].moderation
-                                    },
-                                    process.env.TOKEN_SECRET,
-                                    { expiresIn: '24h' }
-                                ),
-                                moderation: result[0].moderation
+                                    { userId: result[0].id },
+                                    process.env.TOKEN,
+                                    { expiresIn: '24h' } 
+                                )
                             });
                         })
                         .catch(error => reject({ error }));
@@ -47,19 +45,19 @@ class UserModels {
             })
 
         })
-    }
-    // seeMyProfile(sqlInserts){
-    //     let sql = 'SELECT firstName, lastName, email FROM users WHERE id = ?';
-    //     sql = mysql.format(sql,sqlInserts);
-    //     return new Promise((resolve, reject) =>{
-    //         connectdb.query(sql, function(err, result){
-    //             if (err) return reject({error : 'page indisponible'});
-    //             resolve(result);
-    //         }) 
+    };
 
-    //     })
+    getOneUser(sqlInserts){
+        let sql = 'SELECT full_name, email FROM users WHERE id = ?';
+        sql = mysql.format(sql, sqlInserts);
+        return new Promise((resolve, reject) =>{
+            connectdb.query(sql, function(err, result){
+                if (err) return reject({error : 'Profile not found!'});
+                resolve(result);
+            }) 
+        })
+    };
 
-    // }
     // updateUser(sqlInserts){
     //     let sql = 'UPDATE users SET firstName = ?, lastName = ?, email = ? WHERE id = ?';
     //     sql = mysql.format(sql,sqlInserts);
