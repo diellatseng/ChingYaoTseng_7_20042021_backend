@@ -4,8 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 class UserModels {
-    // constructor() {
-    // }
+
     register(sqlInserts) {
         let sql = 'INSERT INTO user (`full_name`, `email`, `password`) VALUES( ?, ?, ?)';
         sql = mysql.format(sql, sqlInserts);

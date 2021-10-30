@@ -1,5 +1,5 @@
-// const { PrismaClient } = require('@prisma/client')
-// const prisma = new PrismaClient()
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
 
 const connectdb = require('../connectdb.js');
 const mysql = require('mysql');
@@ -10,16 +10,22 @@ let postModels = new PostModels();
 
 /* Create a post */
 exports.createPost = async (req, res, next) => {
-    console.log('receive request...');
+
+    console.log('req.body -> ' + JSON.stringify(req.body));
+    console.log('req.file -> ' + JSON.stringify(req.file));
+
+
+
     let content = req.body.content;
     let author_id = req.body.author_id;
     let imgUrl = req.body.imgUrl;
+
     
     let sqlInserts = [content, author_id, imgUrl];
     console.log('SQL inserts' + sqlInserts);
     postModels.createPost(sqlInserts)
         .then((response) => {
-            res.status(201).json(JSON.stringify(response));
+            res.status(201).json(JSON.stringify(response));                 //should refresh here
         })
         .catch((error) => {
             console.error(error);
@@ -27,14 +33,15 @@ exports.createPost = async (req, res, next) => {
         })
 };
 
-// if (req.file) {
-//     post = {
-//         ...post,
-//         imgURL: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-//     };
-// }
+    // if (req.file) {
+    //     post = {
+    //         ...post,
+    //         imgURL: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    //     };
+    // }
 
-// Get all posts //
+/* Get all posts */
+
 exports.getAllPosts = async (req, res, next) => {
     const posts = await prisma.post.findMany({
         orderBy: {

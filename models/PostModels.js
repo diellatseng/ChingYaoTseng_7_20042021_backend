@@ -2,12 +2,9 @@ const connectdb = require('../connectdb.js');
 const mysql = require('mysql');
 
 class PostModels {
-    constructor() {
-    }
-
 
     // getAllPosts() {
-    //     let sql = "SELECT posts.id, posts.userId, posts.title, posts.content, DATE_FORMAT(DATE(posts.date), '%d/%m/%Y') AS date, TIME(posts.date) AS time, posts.likes, users.lastName, users.firstName FROM posts JOIN users ON posts.userId = users.id ORDER BY posts.date DESC";
+    //     let sql = "SELECT post.id, post.userId, post.content, DATE_FORMAT(DATE(post.date), '%d/%m/%Y') AS date, TIME(post.date) AS time, post.likes, user.full_name FROM post JOIN user ON post.userId = users.id ORDER BY post.date DESC";
     //     return new Promise((resolve) => {
     //         connectdb.query(sql, function (err, result, fields) {
     //             if (err) throw err;
@@ -15,6 +12,7 @@ class PostModels {
     //         });
     //     })
     // }
+
     createPost(sqlInserts) {
         console.log('into model...')
         let sql = 'INSERT INTO post (`content`, `author_id`, `img_url`) VALUES( ?, ?, ?)';
