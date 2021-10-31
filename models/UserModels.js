@@ -10,6 +10,7 @@ class UserModels {
     constructor() {
     }
 
+    // Functions using traditional way to query database
     register(sqlInserts) {
         let sql = 'INSERT INTO user (`full_name`, `email`, `password`) VALUES( ?, ?, ?)';
         sql = mysql.format(sql, sqlInserts);
@@ -50,17 +51,7 @@ class UserModels {
         })
     };
 
-    // getOneUser(sqlInserts){
-    //     let sql = 'SELECT full_name, email FROM users WHERE id = ?';
-    //     sql = mysql.format(sql, sqlInserts);
-    //     return new Promise((resolve, reject) =>{
-    //         connectdb.query(sql, function(err, result){
-    //             if (err) return reject({error : 'Profile not found!'});
-    //             resolve(result);
-    //         }) 
-    //     })
-    // };
-
+    // Functions using prisma to query database
     async getOneUser(sqlInserts) {
         try {
             const user = await prisma.user.findUnique({
@@ -70,16 +61,23 @@ class UserModels {
             })
             return user;
         } catch (error) {
-            throw error
+            throw error;
         }
-        // return new Promise((resolve, reject) => {
-        //     connectdb.query(user, function (err, result) {
-        //         resolve(result)
-        //         if (err) return reject({ error: 'Profile not found!' })
-        //     })
-        // })
     }
-
+    
+    async deleteUser(sqlInserts) {
+        try {
+            const deleteUser = await prisma.user.delete({
+                where: {
+                    id: sqlInserts,
+                },
+            })
+            console.log(deleteUser);
+            return deleteUser;
+        } catch (error) {
+            throw error;
+        }
+    }
     // updateUser(sqlInserts){
     //     let sql = 'UPDATE users SET firstName = ?, lastName = ?, email = ? WHERE id = ?';
     //     sql = mysql.format(sql,sqlInserts);
@@ -90,18 +88,6 @@ class UserModels {
     //         }) 
 
     //     })
-    // }
-    // deleteUser(sqlInserts){
-    //     let sql = 'DELETE FROM users WHERE id = ?'; 
-    //     sql = mysql.format(sql,sqlInserts);
-    //     return new Promise((resolve, reject) =>{
-    //         connectdb.query(sql, function(err, result){
-    //             if (err) return reject({error : 'fonction indisponible'});
-    //             resolve({message : 'Utilisateur supprimé'});
-    //         }) 
-
-    //     })
-
     // }
 }
 

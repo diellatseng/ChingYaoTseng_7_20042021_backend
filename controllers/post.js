@@ -1,6 +1,3 @@
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
-
 const connectdb = require('../connectdb.js');
 const mysql = require('mysql');
 const jwt = require('jsonwebtoken');
@@ -8,18 +5,21 @@ const jwt = require('jsonwebtoken');
 const PostModels = require('../Models/PostModels.js');
 let postModels = new PostModels();
 
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
+
+// Functions using traditional way to query database
+
 /* Create a post */
 exports.createPost = async (req, res, next) => {
 
     console.log('req.body -> ' + JSON.stringify(req.body));
     console.log('req.file -> ' + JSON.stringify(req.file));
 
-
     let content = req.body.content;
     let author_id = req.body.author_id;
     let imgUrl = req.body.imgUrl;
 
-    
     let sqlInserts = [content, author_id, imgUrl];
     console.log('SQL inserts' + sqlInserts);
     postModels.createPost(sqlInserts)
@@ -39,8 +39,9 @@ exports.createPost = async (req, res, next) => {
     //     };
     // }
 
-/* Get all posts */
+// Functions using traditional way to query database
 
+/* Get all posts */
 exports.getAllPosts = async (req, res, next) => {
     const posts = await prisma.post.findMany({
         orderBy: {
