@@ -2,7 +2,7 @@ const connectdb = require('../connectdb.js');
 const mysql = require('mysql');
 const jwt = require('jsonwebtoken');
 
-const PostModels = require('../Models/PostModels.js');
+const PostModels = require('../Models/PostModels.js'); 
 let postModels = new PostModels();
 
 const { PrismaClient } = require('@prisma/client')
@@ -62,3 +62,17 @@ exports.getAllPosts = async (req, res, next) => {
         .then(posts => res.status(200).json(posts))
         .catch(error => res.status(404).json({ message: error.message }));
 };
+
+// exports.getAllComments = async (req, res, next) => {
+//     const comments = await prisma.comment.findMany({
+//         orderBy: {
+//             created_at: 'desc',
+//         },
+//         include: {
+//             author: true,
+//             content: true,
+//         },
+//     })
+//         .then(comments => res.status(200).json(comments))
+//         .catch(error => res.status(404).json({ message: error.message }));
+// };

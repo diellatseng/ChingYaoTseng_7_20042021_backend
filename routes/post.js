@@ -8,6 +8,8 @@ const multer = require('../middleware/multer-config')
 router.get('/', auth, postCtrl.getAllPosts);
 router.post('/', auth, postCtrl.createPost);
 
+// router.get('/comment', auth, postCtrl.getAllComments);
+
 module.exports = router;
 
 // const sauceCtrl = require('../controllers/sauce');
