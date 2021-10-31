@@ -15,7 +15,6 @@ exports.createPost = async (req, res, next) => {
     console.log('req.file -> ' + JSON.stringify(req.file));
 
 
-
     let content = req.body.content;
     let author_id = req.body.author_id;
     let imgUrl = req.body.imgUrl;

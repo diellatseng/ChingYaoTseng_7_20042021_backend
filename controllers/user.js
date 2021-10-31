@@ -43,14 +43,13 @@ exports.login = (req, res, next) => {
 }
 
 exports.getOneUser = (req, res, next) => {
-    console.log('req.headers -> ' + req.headers);
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, process.env.TOKEN);
     const userId = decodedToken.userId;
-    let sqlInserts = [userId];
+    let sqlInserts = userId;
     userModels.getOneUser(sqlInserts)
         .then((response) => {
-            res.status(200).json(JSON.stringify(response))
+            res.status(200).json(response)
         })
         .catch((error) => {
             console.log(error);
