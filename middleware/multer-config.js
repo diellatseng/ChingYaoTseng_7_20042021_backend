@@ -8,9 +8,6 @@ const validMimeTypes = [
     'image/png',
     'image/gif'
 ]
-
-console.log('this is multer')
-
 // Multer option object
 const saveImageToStorage = {
     storage: multer.diskStorage({

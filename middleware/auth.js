@@ -4,6 +4,7 @@ const mysql = require('mysql');
 const { response } = require('express');
 
 module.exports = (req, res, next) => {
+    console.log('Auth: req.body -> ' + JSON.stringify(req.body));
     if (req.headers.authorization) {
         try {
             const token = req.headers.authorization.split(' ')[1];
@@ -12,15 +13,14 @@ module.exports = (req, res, next) => {
             let sqlInserts = [userId];
             let sql = 'SELECT * FROM user WHERE id=?';
             sql = mysql.format(sql, sqlInserts);
-            console.log(sql);
             connectdb.query(sql, function(err, rows, fields){
-                if (err) throw err;
+                if (err) console.log('Oops... somthing went wrong.');
                 next();
             })
         } catch (error) {
-            res.status(404).json({ error: message })
+            res.status(401).json({ message: 'Error! Unauthorized.' })
         }
     } else {
-        res.status(401).json({ error: message })
+        res.status(401).json({ message: 'Error! Not logged in' })
     }
 }; 

@@ -13,8 +13,8 @@ const prisma = new PrismaClient()
 /* Create a post */
 exports.createPost = async (req, res, next) => {
 
-    console.log('req.body -> ' + JSON.stringify(req.body));
-    console.log('req.file -> ' + JSON.stringify(req.file));
+    console.log('Controller: req.body -> ' + JSON.stringify(req.body));
+    console.log('Controller: req.img_url -> ' + JSON.stringify(req.img_url));
 
     let content = req.body.content;
     let author_id = req.body.author_id;
