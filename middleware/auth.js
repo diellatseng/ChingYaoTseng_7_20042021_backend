@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 const connectdb = require('../connectdb.js');
 const mysql = require('mysql');
-const { response } = require('express');
 
 module.exports = (req, res, next) => {
     console.log('Auth: req.body -> ' + JSON.stringify(req.body));
@@ -13,7 +12,7 @@ module.exports = (req, res, next) => {
             let sqlInserts = [userId];
             let sql = 'SELECT * FROM user WHERE id=?';
             sql = mysql.format(sql, sqlInserts);
-            connectdb.query(sql, function(err, rows, fields){
+            connectdb.query(sql, function (err, rows, fields) {
                 if (err) console.log('Oops... somthing went wrong.');
                 next();
             })
@@ -23,4 +22,4 @@ module.exports = (req, res, next) => {
     } else {
         res.status(401).json({ message: 'Error! Not logged in' })
     }
-}; 
+};

@@ -24,8 +24,9 @@ exports.createPost = async (req, res, next) => {
     console.log('SQL inserts' + sqlInserts);
     postModels.createPost(sqlInserts)
         .then((response) => {
+            console.log(response);
             res.status(201).json(JSON.stringify(response));                 //should refresh here
-        })
+        })        
         .catch((error) => {
             console.error(error);
             res.status(400).json({ error })
@@ -49,7 +50,11 @@ exports.getAllPosts = async (req, res, next) => {
         },
         include: {
             author: true,
-            comments: true,
+            comments: {
+                include: {
+                    author: true
+                } 
+            },
             likes: true,
             _count: {
                 select: {
@@ -59,7 +64,9 @@ exports.getAllPosts = async (req, res, next) => {
             }
         },
     })
-        .then(posts => res.status(200).json(posts))
+        .then(posts => {
+            return res.status(200).json(posts)
+        })
         .catch(error => res.status(404).json({ message: error.message }));
 };
 

@@ -20,29 +20,33 @@ class PostModels {
         return new Promise((resolve) => {
             connectdb.query(sql, function (err, result) {
                 if (err) throw err;
-                resolve({ message: 'New post created!' });
+                console.log(result);
+                resolve({ 
+                    postId: result.insertId,
+                    message: 'New post created!' 
+                });
             })
         })
     }
-//     updatePost(sqlInserts1, sqlInserts2) {
-//         let sql1 = 'SELECT * FROM posts where id = ?';
-//         sql1 = mysql.format(sql1, sqlInserts1);
-//         return new Promise((resolve) => {
-//             connectdb.query(sql1, function (err, result, fields) {
-//                 if (err) throw err;
-//                 if (sqlInserts2[3] == result[0].userId) {
-//                     let sql2 = 'UPDATE posts SET title = ?, content = ? WHERE id = ? AND userId = ?';
-//                     sql2 = mysql.format(sql2, sqlInserts2);
-//                     connectdb.query(sql2, function (err, result, fields) {
-//                         if (err) throw err;
-//                         resolve({ message: 'Post modifié !' });
-//                     })
-//                 } else {
-//                     reject({ error: 'fonction indisponible' });
-//                 }
-//             })
-//         });
-//     }
+    // updatePost(sqlInserts1, sqlInserts2) {
+    //     let sql1 = 'SELECT * FROM posts where id = ?';
+    //     sql1 = mysql.format(sql1, sqlInserts1);
+    //     return new Promise((resolve) => {
+    //         connectdb.query(sql1, function (err, result, fields) {
+    //             if (err) throw err;
+    //             if (sqlInserts2[3] == result[0].userId) {
+    //                 let sql2 = 'UPDATE posts SET title = ?, content = ? WHERE id = ? AND userId = ?';
+    //                 sql2 = mysql.format(sql2, sqlInserts2);
+    //                 connectdb.query(sql2, function (err, result, fields) {
+    //                     if (err) throw err;
+    //                     resolve({ message: 'Post modifié !' });
+    //                 })
+    //             } else {
+    //                 reject({ error: 'fonction indisponible' });
+    //             }
+    //         })
+    //     });
+    // }
 //     deletePost(sqlInserts1, sqlInserts2) {
 //         let sql1 = 'SELECT * FROM posts where id = ?';
 //         sql1 = mysql.format(sql1, sqlInserts1);
