@@ -47,13 +47,23 @@ class PostModels {
         });
     }
 
+    getImage(sqlInsert) {
+        let sql1 = 'SELECT img_url FROM post WHERE id = ?';
+        sql1 = mysql.format(sql1, sqlInsert);
+        return new Promise((resolve) => {
+            connectdb.query(sql1, function (err, result) {
+                if (err) throw err;
+                resolve(result);
+            }) 
+        })
+    }
+
     deletePost(sqlInsert) {
         let sql1 = 'DELETE FROM post WHERE id = ?';
         sql1 = mysql.format(sql1, sqlInsert);
         return new Promise((resolve) => {
             connectdb.query(sql1, function (err, result) {
                 if (err) throw err;
-                console.log(result);
                 resolve({
                     message: 'Post Deleted!'
                 })

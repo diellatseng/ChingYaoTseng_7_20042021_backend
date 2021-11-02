@@ -1,11 +1,13 @@
 const connectdb = require('../connectdb.js');
 const mysql = require('mysql');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
 
 const PostModels = require('../Models/PostModels.js');
 let postModels = new PostModels();
 
-const { PrismaClient } = require('@prisma/client')
+const { PrismaClient } = require('@prisma/client');
+const { findSync } = require('@prisma/client/runtime');
 const prisma = new PrismaClient()
 
 // Functions using traditional way to query database
@@ -77,16 +79,32 @@ exports.updatePost = (req, res, next) => {
 }
 
 /* Delete a post */
-exports.deletePost = (req, res, next) => {
+exports.deletePost = async (req, res, next) => {
     let postId = req.params.id;
     let sqlInsert = [postId];
-    console.log('sqlInsert(postId): ' + sqlInsert);
-    postModels.deletePost(sqlInsert,)
+    
+    let file = "";
+    
+    await postModels.getImage(sqlInsert)
         .then((response) => {
-            res.status(200).json(JSON.stringify(response));
+            const filename = response[0].img_url.split(/images/)[1];
+            console.log('1 : ' + filename);
+            file = filename;
         })
         .catch((error) => {
             console.log(error);
             res.status(400).json(JSON.stringify(error));
         })
+        
+    if (file !== '') {
+        fs.unlink(`images${file}`, (err) => {
+            if (err) throw err;
+            console.log('2: Image unlinked.')
+        })
+    }
+
+    await postModels.deletePost(sqlInsert)
+        .then(() => res.status(200).json({ message: 'Image deleted!' }))
+        .catch(error => res.status(400).json({ message: error.message }));
+        
 }
