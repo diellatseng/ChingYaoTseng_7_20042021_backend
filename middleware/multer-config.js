@@ -25,9 +25,9 @@ const saveImageToStorage = {
         if (validMimeTypes.includes(file.mimetype)) {
             callback(null, true)
         } else {
-            callback(new Error('Invalid file type! Accepts only .png, .jpg and .jpeg extensions.'), false);
+            callback(new Error('Invalid file type! Accepts only .png, .jpg, .jpeg and .gif extensions.'), false);
         }
     }
 }
 
-module.exports = multer(saveImageToStorage).single('image');
+module.exports = multer(saveImageToStorage).single('file');
