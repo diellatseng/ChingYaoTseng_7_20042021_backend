@@ -33,15 +33,6 @@ exports.createPost = async (req, res, next) => {
         })
 };
 
-    // if (req.file) {
-    //     post = {
-    //         ...post,
-    //         imgURL: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    //     };
-    // }
-
-// Functions using traditional way to query database
-
 /* Get all posts */
 exports.getAllPosts = async (req, res, next) => {
     const posts = await prisma.post.findMany({
@@ -70,16 +61,16 @@ exports.getAllPosts = async (req, res, next) => {
         .catch(error => res.status(404).json({ message: error.message }));
 };
 
-// exports.getAllComments = async (req, res, next) => {
-//     const comments = await prisma.comment.findMany({
-//         orderBy: {
-//             created_at: 'desc',
-//         },
-//         include: {
-//             author: true,
-//             content: true,
-//         },
-//     })
-//         .then(comments => res.status(200).json(comments))
-//         .catch(error => res.status(404).json({ message: error.message }));
-// };
+exports.deletePost = (req, res, next) => {
+    let postId = req.params.id;
+    let sqlInsert = [postId];
+    console.log('sqlInsert(postId): ' + sqlInsert);
+    postModels.deletePost(sqlInsert,)
+        .then((response) => {
+            res.status(200).json(JSON.stringify(response));
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(400).json(JSON.stringify(error));
+        })
+}

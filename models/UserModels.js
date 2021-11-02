@@ -34,6 +34,7 @@ class UserModels {
                 } else {
                     bcrypt.compare(password, result[0].password) 
                         .then(valid => { 
+                            console.log(result[0]);
                             if (!valid) return reject({ error: 'Password incorrect!' });
                             resolve({
                                 userId: result[0].id,
@@ -41,7 +42,8 @@ class UserModels {
                                     { userId: result[0].id },
                                     process.env.TOKEN,
                                     { expiresIn: '24h' } 
-                                )
+                                ),
+                                role: result[0].role
                             });
                         })
                         .catch(error => reject({ error }));
