@@ -17,7 +17,7 @@ exports.createPost = async (req, res, next) => {
     let content = req.body.content;
     let author_id = req.body.author_id;
     let sqlInserts = [content, author_id];
-    postModels.createPost(sqlInserts)
+    await postModels.createPost(sqlInserts)
         .then((response) => {
             res.status(201).json(JSON.stringify(response));                 //should refresh here
         })
@@ -29,31 +29,39 @@ exports.createPost = async (req, res, next) => {
 
 /* Get all posts */
 exports.getAllPosts = async (req, res, next) => {
-    const posts = await prisma.post.findMany({
-        orderBy: {
-            created_at: 'desc',
-        },
-        include: {
-            author: true,
-            comments: {
-                include: {
-                    author: true
-                }
-            },
-            likes: true,
-            _count: {
-                select: {
-                    comments: true,
-                    likes: true
-                }
-            }
-        },
-    })
-        .then(posts => {
-            return res.status(200).json(posts)
-        })
-        .catch(error => res.status(404).json({ message: error.message }));
-};
+    await postModels.getAllPosts()
+        .then((response) => {
+            console.log(response);
+            res.status(200).json(response);
+        });
+}
+
+// exports.getAllPosts = async (req, res, next) => {
+//     const posts = await prisma.post.findMany({
+//         orderBy: {
+//             created_at: 'desc',
+//         },
+//         include: {
+//             author: true,
+//             comments: {
+//                 include: {
+//                     author: true
+//                 }
+//             },
+//             likes: true,
+//             _count: {
+//                 select: {
+//                     comments: true,
+//                     likes: true
+//                 }
+//             }
+//         },
+//     })
+//         .then(posts => {
+//             return res.status(200).json(posts)
+//         })
+//         .catch(error => res.status(404).json({ message: error.message }));
+// };
 
 /* Modify a post */
 exports.updatePost = (req, res, next) => {

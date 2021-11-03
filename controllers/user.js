@@ -64,11 +64,10 @@ exports.deleteUser = (req, res, next) => {
     let sqlInserts = userId;
     userModels.deleteUser(sqlInserts)
         .then((response) => {
-            res.status(200).json({ message: `Account ${response.email} has been deleted.`})
+            res.status(200).json({ message: `Account has been deleted.`});
         })
         .catch((error) => {
             console.log(error);
             res.status(400).json(error)
         })
 }
-

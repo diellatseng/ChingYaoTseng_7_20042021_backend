@@ -3,15 +3,16 @@ const mysql = require('mysql');
 
 class PostModels {
 
-    // getAllPosts() {
-    //     let sql = "SELECT post.id, post.userId, post.content, DATE_FORMAT(DATE(post.date), '%d/%m/%Y') AS date, TIME(post.date) AS time, post.likes, user.full_name FROM post JOIN user ON post.userId = users.id ORDER BY post.date DESC";
-    //     return new Promise((resolve) => {
-    //         connectdb.query(sql, function (err, result, fields) {
-    //             if (err) throw err;
-    //             resolve(result)
-    //         });
-    //     })
-    // }
+    getAllPosts() {
+        // let sql = "SELECT post.id AS`P.ID`, post.content AS`P.content`, post.author_id AS`P.authorID`, user.id AS`U.ID`, user.full_name AS`U.name`, `like`.target_id AS`L.target`, `like`.author_id AS`L.authorID`, `like`.id AS`L.ID`, user_1.full_name AS`L.name`, comment.content AS`C.content`, comment.id AS`C.ID`, comment.author_id AS`C.authorID`, comment.post_id AS`C.targetID`, user_2.full_name AS`C.name`, post.created_at, post.img_url, comment.created_at FROM post LEFT OUTER JOIN user ON post.author_id = user.id LEFT OUTER JOIN`like` ON `like`.target_id = post.id LEFT OUTER JOIN user user_1 ON`like`.author_id = user_1.id LEFT OUTER JOIN comment ON comment.post_id = post.id LEFT OUTER JOIN user user_2 ON comment.author_id = user_2.id GROUP BY post.id ORDER BY post.created_at DESC";
+        let sql = "SELECT p.id, p.content, p.created_at, p.img_url, GROUP_CONCAT(u.id ORDER BY u.id) AS likes, COUNT(l.id) AS _count_likes, u_2.full_name, (SELECT COUNT(c.id) FROM comment c WHERE c.post_id = p.id ) AS _count_comments FROM post p LEFT JOIN `like` l ON l.target_id = p.id LEFT JOIN user u ON l.author_id = u.id INNER JOIN user u_2 ON p.author_id = u_2.id GROUP BY p.id ORDER BY p.created_at DESC";
+        return new Promise((resolve) => {
+            connectdb.query(sql, function (err, result, fields) {
+                if (err) throw err;
+                resolve(result)
+            });
+        })
+    }
 
     createPost(sqlInserts) {
         let sql = 'INSERT INTO post (`content`, `author_id`) VALUES( ?, ?)';

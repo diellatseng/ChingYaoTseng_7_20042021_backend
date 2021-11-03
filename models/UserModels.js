@@ -3,12 +3,7 @@ const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
-
 class UserModels {
-    constructor() {
-    }
 
     // Functions using traditional way to query database
     register(sqlInserts) {
@@ -54,32 +49,29 @@ class UserModels {
     };
 
     // Functions using prisma to query database
-    async getOneUser(sqlInserts) {
-        try {
-            const user = await prisma.user.findUnique({
-                where: {
-                    id: sqlInserts,
-                },
+    getOneUser(sqlInserts) {
+        let sql = 'SELECT full_name, email, img_url FROM user WHERE id = ?';
+        sql = mysql.format(sql, sqlInserts);
+        return new Promise((resolve, reject) => {
+            connectdb.query(sql, function (err, result) {
+                if (err) return reject({ error: 'User not found' });
+                resolve(result);
             })
-            return user;
-        } catch (error) {
-            throw error;
-        }
+
+        })
     }
     
-    async deleteUser(sqlInserts) {
-        try {
-            const deleteUser = await prisma.user.delete({
-                where: {
-                    id: sqlInserts,
-                },
+    deleteUser(sqlInserts) {
+        let sql = 'DELETE FROM user WHERE id = ?';
+        sql = mysql.format(sql, sqlInserts);
+        return new Promise((resolve, reject) => {
+            connectdb.query(sql, function (err, result) {
+                if (err) return reject({ error: 'Something went wrong.' });
+                resolve(result);
             })
-            console.log(deleteUser);
-            return deleteUser;
-        } catch (error) {
-            throw error;
-        }
+        })
     }
+
     // updateUser(sqlInserts){
     //     let sql = 'UPDATE users SET firstName = ?, lastName = ?, email = ? WHERE id = ?';
     //     sql = mysql.format(sql,sqlInserts);
