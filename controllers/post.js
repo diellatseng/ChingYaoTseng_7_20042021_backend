@@ -85,24 +85,27 @@ exports.deletePost = async (req, res, next) => {
     
     let file = "";
     
+    // Check if the post has an image
     await postModels.getImage(sqlInsert)
         .then((response) => {
-            const filename = response[0].img_url.split(/images/)[1];
-            console.log('1 : ' + filename);
-            file = filename;
+            if (!response[0] == null) {
+                const filename = response[0].img_url.split(/images/)[1];
+                file = filename;
+            } else {
+                return file = "";
+            }
         })
         .catch((error) => {
             console.log(error);
             res.status(400).json(JSON.stringify(error));
         })
-        
+    // If an image is found in post, delete it from server
     if (file !== '') {
         fs.unlink(`images${file}`, (err) => {
             if (err) throw err;
-            console.log('2: Image unlinked.')
         })
     }
-
+    // And then delete the post(data row) from database
     await postModels.deletePost(sqlInsert)
         .then(() => res.status(200).json({ message: 'Image deleted!' }))
         .catch(error => res.status(400).json({ message: error.message }));
