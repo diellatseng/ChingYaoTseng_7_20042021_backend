@@ -9,7 +9,7 @@ router.get('/', auth, postCtrl.getAllPosts);
 router.post('/', auth, postCtrl.createPost);
 router.delete('/:id', auth, postCtrl.deletePost);
 router.put('/:id', auth, multer, postCtrl.updatePost);
-// router.post('/:id/like', auth, postCtrl.likePost);
+router.post('/:id/like', auth, postCtrl.likePost);
 
 // router.get('/comment', auth, postCtrl.getAllComments);
 
