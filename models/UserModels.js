@@ -48,7 +48,6 @@ class UserModels {
         })
     };
 
-    // Functions using prisma to query database
     getOneUser(sqlInserts) {
         let sql = 'SELECT full_name, email, img_url FROM user WHERE id = ?';
         sql = mysql.format(sql, sqlInserts);
@@ -57,7 +56,6 @@ class UserModels {
                 if (err) return reject({ error: 'User not found' });
                 resolve(result);
             })
-
         })
     }
     
