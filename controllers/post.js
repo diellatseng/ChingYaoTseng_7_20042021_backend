@@ -94,10 +94,20 @@ exports.likePost = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, process.env.TOKEN);
     const author_id = decodedToken.userId;
-    let postId = req.params.id;
+    const postId = req.params.id;
+
+    const sqlInserts1 = [postId, author_id];
+    postModels.likePost(sqlInserts1)
+        .then((response) => {
+            res.status(201).json(response);
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(400).json(JSON.stringify(error));
+        })
 
     // const post_id = req.body
     console.log("author_id: " + author_id);
     console.log("postId: " + postId);
-    console.log(req.body.like);
+    console.log(JSON.stringify(req.body));
 }

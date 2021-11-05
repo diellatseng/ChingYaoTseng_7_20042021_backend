@@ -71,7 +71,46 @@ class PostModels {
         })
     }
 
+    likePost(sqlInserts1) {
+        const post_id = sqlInserts1[0];
+        const author_id = sqlInserts1[1];
 
+        let sql1 = 'SELECT * FROM `like` where target_id = ? AND author_id = ?';
+        sql1 = mysql.format(sql1, [post_id, author_id]);
+        return new Promise((resolve) => {
+            connectdb.query(sql1, function (err, result, fields) {
+                // if (err) throw err;
+                if (result == '') {
+                    let sql2 = 'INSERT INTO `like`(author_id, target_id) VALUES (?, ?)';
+                    sql2 = mysql.format(sql2, [author_id, post_id]);
+                    connectdb.query(sql2, function (err, result, fields) {
+                        if (err) throw err;
+                        resolve({ like: true });
+                    })
+                }
+                else if (sqlInserts1[1] == result[0].author_id) {
+                    let sql3 = 'DELETE FROM `like` WHERE author_id = ? AND target_id = ?';
+                    sql3 = mysql.format(sql3, [author_id, post_id]);
+                    connectdb.query(sql3, function (err, result, fields) {
+                        if (err) throw err;
+                        resolve({ like: false });
+                    })
+                }
+                  
+                    
+                // if (sqlInserts2[1] == result[0].author_id) {
+                //     let sql2 = 'UPDATE post SET img_url = ? WHERE id = ? AND author_id = ?';
+                //     sql2 = mysql.format(sql2, sqlInserts2);
+                //     connectdb.query(sql2, function (err, result, fields) {
+                //         if (err) throw err;
+                //         resolve({ message: 'Post modified!' });
+                //     })
+                // } else {
+                //     reject({ error: 'Oops! something went wrong!' });
+                // }
+            })
+        });
+    }
     //     getComments(sqlInserts) {
     //         let sql = "SELECT comments.comContent, DATE_FORMAT(comments.date, '%d/%m/%Y à %H:%i:%s') AS date, comments.id, comments.userId, users.firstName, users.lastName FROM comments JOIN users on comments.userId = users.id WHERE postId = ? ORDER BY date";
     //         sql = mysql.format(sql, sqlInserts);
