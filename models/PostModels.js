@@ -4,7 +4,7 @@ const mysql = require('mysql');
 class PostModels {
 
     getAllPosts() {
-        let sql = "SELECT p.id, p.content, p.created_at, p.img_url, GROUP_CONCAT(u.id ORDER BY u.id) AS likes, COUNT(l.id) AS _count_likes, u_2.full_name, (SELECT COUNT(c.id) FROM comment c WHERE c.post_id = p.id ) AS _count_comments FROM post p LEFT JOIN `like` l ON l.target_id = p.id LEFT JOIN user u ON l.author_id = u.id INNER JOIN user u_2 ON p.author_id = u_2.id GROUP BY p.id ORDER BY p.created_at DESC";
+        let sql = "SELECT p.id, p.author_id, p.content, p.created_at, p.img_url, GROUP_CONCAT(u.id ORDER BY u.id) AS likes, COUNT(l.id) AS _count_likes, u_2.full_name, (SELECT COUNT(c.id) FROM comment c WHERE c.post_id = p.id ) AS _count_comments FROM post p LEFT JOIN `like` l ON l.target_id = p.id LEFT JOIN user u ON l.author_id = u.id INNER JOIN user u_2 ON p.author_id = u_2.id GROUP BY p.id ORDER BY p.created_at DESC";
         return new Promise((resolve) => {
             connectdb.query(sql, function (err, result, fields) {
                 if (err) throw err;
@@ -96,32 +96,21 @@ class PostModels {
                         resolve({ like: false });
                     })
                 }
-                  
-                    
-                // if (sqlInserts2[1] == result[0].author_id) {
-                //     let sql2 = 'UPDATE post SET img_url = ? WHERE id = ? AND author_id = ?';
-                //     sql2 = mysql.format(sql2, sqlInserts2);
-                //     connectdb.query(sql2, function (err, result, fields) {
-                //         if (err) throw err;
-                //         resolve({ message: 'Post modified!' });
-                //     })
-                // } else {
-                //     reject({ error: 'Oops! something went wrong!' });
-                // }
             })
         });
     }
-    //     getComments(sqlInserts) {
-    //         let sql = "SELECT comments.comContent, DATE_FORMAT(comments.date, '%d/%m/%Y à %H:%i:%s') AS date, comments.id, comments.userId, users.firstName, users.lastName FROM comments JOIN users on comments.userId = users.id WHERE postId = ? ORDER BY date";
-    //         sql = mysql.format(sql, sqlInserts);
-    //         return new Promise((resolve) => {
-    //             connectdb.query(sql, function (err, result, fields) {
-    //                 if (err) throw err;
-    //                 resolve(result);
-    //             })
 
-    //         })
-    //     }
+    getComments(postId) {
+        let sql = "SELECT   u.full_name, c.created_at, c.content FROM comment c INNER JOIN user u ON u.id = c.author_id WHERE c.post_id = ? ORDER BY c.created_at DESC";
+        sql = mysql.format(sql, postId);
+        return new Promise((resolve) => {
+            connectdb.query(sql, function (err, result, fields) {
+                console.log(result)
+                if (err) throw err;
+                resolve(result);
+            })
+        })
+    }
     //     createComment(sqlInserts) {
     //         let sql = 'INSERT INTO comments VALUES(NULL, ?, ?, NOW(), ?)';
     //         sql = mysql.format(sql, sqlInserts);

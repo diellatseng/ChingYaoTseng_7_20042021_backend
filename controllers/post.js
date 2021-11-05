@@ -31,6 +31,15 @@ exports.getAllPosts = async (req, res, next) => {
             res.status(200).json(response);
         });
 }
+/* Get all posts */
+exports.getComments = async (req, res, next) => {
+    let postId = req.params.id;
+    await postModels.getComments(postId)
+        .then((response) => {
+            console.log(response);
+            res.status(200).json(response);
+        });
+}
 
 /* Modify a post */
 exports.updatePost = (req, res, next) => {
