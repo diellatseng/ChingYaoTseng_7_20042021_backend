@@ -6,9 +6,7 @@ const fs = require('fs');
 const PostModels = require('../Models/PostModels.js');
 let postModels = new PostModels();
 
-// Functions using traditional way to query database
-
-/* Create a post */
+/* Create post */
 exports.createPost = async (req, res, next) => {
     let content = req.body.content;
     let author_id = req.body.author_id;
@@ -26,15 +24,6 @@ exports.createPost = async (req, res, next) => {
 /* Get all posts */
 exports.getAllPosts = async (req, res, next) => {
     await postModels.getAllPosts()
-        .then((response) => {
-            console.log(response);
-            res.status(200).json(response);
-        });
-}
-/* Get all posts */
-exports.getComments = async (req, res, next) => {
-    let postId = req.params.id;
-    await postModels.getComments(postId)
         .then((response) => {
             console.log(response);
             res.status(200).json(response);
@@ -97,6 +86,37 @@ exports.deletePost = async (req, res, next) => {
         .catch(error => res.status(400).json({ message: error.message }));
 
 }
+
+//////// COMMENTS ////////
+
+/* Get all comments */
+exports.getComments = async (req, res, next) => {
+    let postId = req.params.id;
+    await postModels.getComments(postId)
+        .then((response) => {
+            console.log(response);
+            res.status(200).json(response);
+        });
+}
+
+/* Create comment */
+exports.createComment = async (req, res, next) => {
+    let content = req.body.content;
+    let author_id = req.body.author_id;
+    let post_id = req.params.id;
+
+    let sqlInserts = [content, author_id, post_id];
+    await postModels.createComment(sqlInserts)
+        .then((response) => {
+            res.status(201).json(JSON.stringify(response));
+        })
+        .catch((error) => {
+            console.error(error);
+            res.status(400).json({ error })
+        })
+};
+
+//////// LIKES ////////
 
 /* Like a post */
 exports.likePost = (req, res, next) => {

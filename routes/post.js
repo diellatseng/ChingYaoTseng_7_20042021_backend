@@ -11,10 +11,11 @@ router.post('/', auth, postCtrl.createPost);
 router.delete('/:id', auth, postCtrl.deletePost);
 router.put('/:id', auth, multer, postCtrl.updatePost);
 
-/* Post- Comments */
+/* Post- Likes */
 router.post('/:id/like', auth, postCtrl.likePost);
 
-/* Post- Likes */
+/* Post- Comments */
 router.get('/:id/comment', auth, postCtrl.getComments);
+router.post('/:id/comment', auth, postCtrl.createComment);
 
 module.exports = router;
