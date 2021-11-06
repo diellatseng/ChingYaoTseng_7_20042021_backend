@@ -116,6 +116,18 @@ exports.createComment = async (req, res, next) => {
         })
 };
 
+/* Delete comment */
+exports.deleteComment = async (req, res, next) => {
+    let postId = req.params.postId;
+    let commentId = req.params.commentId;
+    let sqlInsert = [postId, commentId];
+
+    postModels.deleteComment(sqlInsert)
+        .then((response) => res.status(200).json({ message: response.message }))
+        .catch(error => res.status(400).json({ message: error.message }));
+
+}
+
 //////// LIKES ////////
 
 /* Like a post */

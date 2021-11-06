@@ -5,7 +5,7 @@ class PostModels {
 
     getAllPosts() {
         let sql = "SELECT p.id, p.author_id, p.content, p.created_at, p.img_url, GROUP_CONCAT(u.id ORDER BY u.id) AS likes, COUNT(l.id) AS _count_likes, u_2.full_name, (SELECT COUNT(c.id) FROM comment c WHERE c.post_id = p.id ) AS _count_comments FROM post p LEFT JOIN `like` l ON l.target_id = p.id LEFT JOIN user u ON l.author_id = u.id INNER JOIN user u_2 ON p.author_id = u_2.id GROUP BY p.id ORDER BY p.created_at DESC";
-        return new Promise((resolve) => { 
+        return new Promise((resolve) => {
             connectdb.query(sql, function (err, result, fields) {
                 if (err) throw err;
                 resolve(result)
@@ -101,7 +101,7 @@ class PostModels {
     }
 
     getComments(postId) {
-        let sql = "SELECT   u.full_name, c.id, c.created_at, c.content FROM comment c INNER JOIN user u ON u.id = c.author_id WHERE c.post_id = ? ORDER BY c.created_at DESC";
+        let sql = "SELECT   u.full_name, c.id, c.author_id, c.created_at, c.content FROM comment c INNER JOIN user u ON u.id = c.author_id WHERE c.post_id = ? ORDER BY c.created_at DESC";
         sql = mysql.format(sql, postId);
         return new Promise((resolve) => {
             connectdb.query(sql, function (err, result, fields) {
@@ -119,6 +119,19 @@ class PostModels {
             connectdb.query(sql, function (err, result, fields) {
                 if (err) throw err;
                 resolve({ message: 'Commented!' })
+            })
+        })
+    }
+
+    deleteComment(sqlInsert) {
+        let sql1 = 'DELETE FROM comment WHERE post_id = ? AND id = ?';
+        sql1 = mysql.format(sql1, sqlInsert);
+        return new Promise((resolve) => {
+            connectdb.query(sql1, function (err, result) {
+                if (err) throw err;
+                resolve({
+                    message: 'Comment Deleted!'
+                })
             })
         })
     }
