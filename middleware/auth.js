@@ -3,7 +3,6 @@ const connectdb = require('../connectdb.js');
 const mysql = require('mysql');
 
 module.exports = (req, res, next) => {
-    console.log('Auth: req.body -> ' + JSON.stringify(req.body));
     if (req.headers.authorization) {
         try {
             const token = req.headers.authorization.split(' ')[1];

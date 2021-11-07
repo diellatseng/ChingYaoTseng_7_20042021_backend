@@ -59,14 +59,30 @@ class PostModels {
     }
 
     deletePost(sqlInsert) {
-        let sql1 = 'DELETE FROM post WHERE id = ?';
-        sql1 = mysql.format(sql1, sqlInsert);
+        const post_id = sqlInsert;
+
+        let sql1 = 'SELECT * FROM post WHERE id = ?';
+        sql1 = mysql.format(sql1, post_id);
         return new Promise((resolve) => {
             connectdb.query(sql1, function (err, result) {
                 if (err) throw err;
-                resolve({
-                    message: 'Post Deleted!'
-                })
+                if (result[0].img_url === null) {
+                    let sql2 = 'DELETE FROM post WHERE id = ?';
+                    sql2 = mysql.format(sql2, post_id);
+                    connectdb.query(sql2, function (err, result, fields) {
+                        if (err) throw err;
+                        resolve({ img_url: '' });
+                    })
+                }
+                else {
+                    let img_url = result[0].img_url;
+                    let sql2 = 'DELETE FROM post WHERE id = ?';
+                    sql2 = mysql.format(sql2, post_id);
+                    connectdb.query(sql2, function (err, result, fields) {
+                        if (err) throw err;
+                        resolve({ img_url: img_url });
+                    })
+                }
             })
         })
     }
