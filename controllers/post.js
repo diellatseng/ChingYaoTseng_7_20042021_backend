@@ -40,20 +40,22 @@ exports.updatePost = (req, res, next) => {
     // console.log('Controller updatePost: req.body -> ' + req.body)
 
     let postId = req.params.id;
+
     if (req.file) {
-        console.log('Controller updatePost: req.file -> ' + req.file)
+        let img_url = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        let sqlInserts1 = [postId];
+        let sqlInserts2 = [img_url, postId, author_id];
+        postModels.updatePost(sqlInserts1, sqlInserts2)
+            .then((response) => {
+                res.status(201).json(JSON.stringify(response));
+            })
+            .catch((error) => {
+                console.log(error);
+                res.status(400).json(JSON.stringify(error));
+            })
+    } else {
+        console.log('modifying without a file')
     }
-    let img_url = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    let sqlInserts1 = [postId];
-    let sqlInserts2 = [img_url, postId, author_id];
-    postModels.updatePost(sqlInserts1, sqlInserts2)
-        .then((response) => {
-            res.status(201).json(JSON.stringify(response));
-        })
-        .catch((error) => {
-            console.log(error);
-            res.status(400).json(JSON.stringify(error));
-        })
 }
 
 /* Delete post */

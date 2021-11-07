@@ -49,7 +49,7 @@ class UserModels {
     };
 
     getOneUser(sqlInserts) {
-        let sql = 'SELECT full_name, email, img_url FROM user WHERE id = ?';
+        let sql = 'SELECT full_name, email, img_url, role FROM user WHERE id = ?';
         sql = mysql.format(sql, sqlInserts);
         return new Promise((resolve, reject) => {
             connectdb.query(sql, function (err, result) {
