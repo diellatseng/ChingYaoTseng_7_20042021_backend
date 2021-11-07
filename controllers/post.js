@@ -13,7 +13,7 @@ exports.createPost = async (req, res, next) => {
     let sqlInserts = [content, author_id];
     await postModels.createPost(sqlInserts)
         .then((response) => {
-            res.status(201).json(JSON.stringify(response));                 //should refresh here
+            res.status(201).json(JSON.stringify(response));
         })
         .catch((error) => {
             console.error(error);
@@ -25,12 +25,12 @@ exports.createPost = async (req, res, next) => {
 exports.getAllPosts = async (req, res, next) => {
     await postModels.getAllPosts()
         .then((response) => {
-            console.log(response);
+            // console.log(response);
             res.status(200).json(response);
         });
 }
 
-/* Modify a post */
+/* Modify post */
 exports.updatePost = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, process.env.TOKEN);
@@ -53,19 +53,21 @@ exports.updatePost = (req, res, next) => {
         })
 }
 
-/* Delete a post */
+/* Delete post */
 exports.deletePost = async (req, res, next) => {
     let postId = req.params.id;
     let sqlInsert = [postId];
-
     let file = "";
 
     // Check if the post has an image
     await postModels.getImage(sqlInsert)
         .then((response) => {
-            if (!response[0] == null) {
+            console.log('controller, getImage resonse: ' + JSON.stringify(response[0].img_url));
+
+            if (response[0] !== null) {
                 const filename = response[0].img_url.split(/images/)[1];
                 file = filename;
+                console.log('filename: ' + file)
             } else {
                 return file = "";
             }
@@ -74,6 +76,8 @@ exports.deletePost = async (req, res, next) => {
             console.log(error);
             res.status(400).json(JSON.stringify(error));
         })
+
+    
     // If an image is found in post, delete it from server
     if (file !== '') {
         fs.unlink(`images${file}`, (err) => {
@@ -88,7 +92,6 @@ exports.deletePost = async (req, res, next) => {
 }
 
 //////// COMMENTS ////////
-
 /* Get all comments */
 exports.getComments = async (req, res, next) => {
     let postId = req.params.id;
@@ -129,7 +132,6 @@ exports.deleteComment = async (req, res, next) => {
 }
 
 //////// LIKES ////////
-
 /* Like a post */
 exports.likePost = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
