@@ -13,6 +13,17 @@ class PostModels {
         })
     }
 
+    getPost(sqlInsert) {
+        let sql = "SELECT * FROM post WHERE id = ?";
+        sql = mysql.format(sql, sqlInsert);
+        return new Promise((resolve) => {
+            connectdb.query(sql, function (err, result, fields) {
+                if (err) throw err;
+                resolve(result)
+            });
+        })
+    }
+
     createPost(sqlInserts) {
         let sql = 'INSERT INTO post (`content`, `author_id`) VALUES( ?, ?)';
         sql = mysql.format(sql, sqlInserts);
@@ -20,31 +31,56 @@ class PostModels {
             connectdb.query(sql, function (err, result) {
                 if (err) throw err;
                 resolve({
-                    postId: result.insertId,
+                    data: {
+                        postId: result.insertId,
+                        postContent: sqlInserts[0],
+                    },
                     message: 'New post created!'
                 });
             })
         })
     }
 
-    updatePost(sqlInserts1, sqlInserts2) {
+    updatePost(sqlInserts) {
+        const postId = sqlInserts[0];
+        const content = sqlInserts[1];
+        const author_id = sqlInserts[2];
+        const img_url = sqlInserts[3];
+
+        console.log('post models, img_url: ' + img_url)
+        
         let sql1 = 'SELECT * FROM post where id = ?';
-        sql1 = mysql.format(sql1, sqlInserts1);
+        sql1 = mysql.format(sql1, postId);
+
+        console.log('post models, sql1: ' + sql1)
+        
         return new Promise((resolve) => {
+            // update content
             connectdb.query(sql1, function (err, result, fields) {
                 if (err) throw err;
-                if (sqlInserts2[2] == result[0].author_id) {
-                    let sql2 = 'UPDATE post SET img_url = ? WHERE id = ? AND author_id = ?';
-                    sql2 = mysql.format(sql2, sqlInserts2);
-                    connectdb.query(sql2, function (err, result, fields) {
+                if (author_id == result[0].author_id) {
+                    let sql2 = 'UPDATE post SET content = ? WHERE id = ? AND author_id = ?';
+                    sql2 = mysql.format(sql2, [content, postId, author_id]);
+                    console.log('post models, sql2 (update content): ' + sql2)
+                    
+                    connectdb.query(sql2, function (err, result, fields){
                         if (err) throw err;
-                        resolve({ message: 'Post modified!' });
+                        if (img_url != null){
+                            let sql3 = 'UPDATE post SET img_url = ? WHERE id = ? AND author_id = ?';
+                            sql3 = mysql.format(sql3, [img_url, postId, author_id]);
+                            console.log('post models, sql3 (update image): ' + sql3)
+
+                            connectdb.query(sql3, function (err, result, fields){
+                                if (err) throw err;
+                                resolve({ img_url: img_url }); //Send to controller, delete old file
+                            })
+                        } else {
+                            resolve({ message: 'Post updated.'})
+                        }
                     })
-                } else {
-                    reject({ error: 'Oops! something went wrong!' });
                 }
             })
-        });
+        })
     }
 
     getImage(sqlInsert) {

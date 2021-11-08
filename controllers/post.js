@@ -30,32 +30,48 @@ exports.getAllPosts = async (req, res, next) => {
         });
 }
 
+/* Get one post */
+exports.getPost = async (req, res, next) => {
+    let sqlInsert = req.params.id;
+    await postModels.getPost(sqlInsert)
+        .then((response) => {
+            res.status(200).json(response);
+        });
+}
+
 /* Modify post */
 exports.updatePost = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, process.env.TOKEN);
     const author_id = decodedToken.userId;
 
-    // let content = req.body;
-    // console.log('Controller updatePost: req.body -> ' + req.body)
-
     let postId = req.params.id;
+    console.log(req.params)
+    
+    let content = req.body.content;
+    console.log(content)
 
+    let img_url;
+
+    // Update post with a file
     if (req.file) {
-        let img_url = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        let sqlInserts1 = [postId];
-        let sqlInserts2 = [img_url, postId, author_id];
-        postModels.updatePost(sqlInserts1, sqlInserts2)
-            .then((response) => {
-                res.status(201).json(JSON.stringify(response));
-            })
-            .catch((error) => {
-                console.log(error);
-                res.status(400).json(JSON.stringify(error));
-            })
-    } else {
-        console.log('modifying without a file')
-    }
+        console.log('modifying with a file')
+        img_url = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+        console.log('controller getting img_url: ' + img_url)
+    } 
+    
+    let sqlInserts = [postId, content, author_id, img_url];
+    console.log('Post controller, sqlInserts: ' + sqlInserts)
+
+
+    postModels.updatePost(sqlInserts)
+    .then((response) => {
+        res.status(201).json(JSON.stringify(response));
+    })
+    .catch((error) => {
+        console.log(error);
+        res.status(400).json(JSON.stringify(error));
+    })
 }
 
 /* Delete post */
@@ -66,17 +82,17 @@ exports.deletePost = async (req, res, next) => {
     await postModels.deletePost(sqlInsert)
         .then((result) => {
             console.log(JSON.stringify(result.img_url));
-                return result.img_url
+            return result.img_url
         })
 
         .then((img_url) => {
             console.log('enter to 2nd then: ' + img_url);
-            if(img_url !== '') {
+            if (img_url !== '') {
                 const filename = img_url.split(/images/)[1];
                 fs.unlink(`images${filename}`, (err) => {
                     if (err) throw err;
                 })
-            } 
+            }
         })
 
         .then(() => {
