@@ -53,28 +53,28 @@ exports.updatePost = (req, res, next) => {
     if (req.file) {
         console.log('modifying with a file')
         img_url = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
-    } 
-    
+    }
+
     let sqlInserts = [postId, content, author_id, img_url];
 
     postModels.updatePost(sqlInserts)
-    .then((response) => {
-        if (response.old_url != null) {
-            console.log('I have old picture to delete');
-            const filename = response.old_url.split(/images/)[1];
-            fs.unlink(`images${filename}`, (err) => {
-                if (err) throw err;
-            })
-            res.status(201).json(JSON.stringify(response));
-        } else {
-            console.log('I dont have old picture to delete')
-            res.status(201).json(JSON.stringify(response));
-        }
-    })
-    .catch((error) => {
-        console.log(error);
-        res.status(400).json(JSON.stringify(error));
-    })
+        .then((response) => {
+            if (response.old_url != null) {
+                console.log('I have old picture to delete');
+                const filename = response.old_url.split(/images/)[1];
+                fs.unlink(`images${filename}`, (err) => {
+                    if (err) console.log(err);
+                })
+                res.status(201).json(JSON.stringify(response));
+            } else {
+                console.log('I dont have old picture to delete')
+                res.status(201).json(JSON.stringify(response));
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(400).json(JSON.stringify(error));
+        })
 }
 
 /* Delete post */
@@ -87,21 +87,18 @@ exports.deletePost = async (req, res, next) => {
             console.log(JSON.stringify(result.img_url));
             return result.img_url
         })
-
         .then((img_url) => {
             console.log('enter to 2nd then: ' + img_url);
             if (img_url !== '') {
                 const filename = img_url.split(/images/)[1];
                 fs.unlink(`images${filename}`, (err) => {
-                    if (err) throw err;
+                    if (err) console.log(err);
                 })
             }
         })
-
         .then(() => {
             res.status(200).json({ message: 'Post deleted!' })
         })
-
         .catch((error) => {
             console.log(error);
             res.status(400).json(JSON.stringify(error));
