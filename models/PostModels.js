@@ -46,7 +46,7 @@ class PostModels {
         const content = sqlInserts[1];
         const author_id = sqlInserts[2];
         const img_url = sqlInserts[3];
-
+ 
         console.log('post models, img_url: ' + img_url)
         
         let sql1 = 'SELECT * FROM post where id = ?';
@@ -59,6 +59,9 @@ class PostModels {
             connectdb.query(sql1, function (err, result, fields) {
                 if (err) throw err;
                 if (author_id == result[0].author_id) {
+                    const old_url = result[0].img_url;
+                    console.log(old_url);
+
                     let sql2 = 'UPDATE post SET content = ? WHERE id = ? AND author_id = ?';
                     sql2 = mysql.format(sql2, [content, postId, author_id]);
                     console.log('post models, sql2 (update content): ' + sql2)
@@ -72,7 +75,10 @@ class PostModels {
 
                             connectdb.query(sql3, function (err, result, fields){
                                 if (err) throw err;
-                                resolve({ img_url: img_url }); //Send to controller, delete old file
+                                if (old_url == null) {
+                                    resolve({ message: 'Post updated.' })
+                                }
+                                resolve({ old_url: old_url }); //Send to controller, delete old file
                             })
                         } else {
                             resolve({ message: 'Post updated.'})

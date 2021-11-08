@@ -46,27 +46,30 @@ exports.updatePost = (req, res, next) => {
     const author_id = decodedToken.userId;
 
     let postId = req.params.id;
-    console.log(req.params)
-    
     let content = req.body.content;
-    console.log(content)
-
     let img_url;
 
     // Update post with a file
     if (req.file) {
         console.log('modifying with a file')
         img_url = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
-        console.log('controller getting img_url: ' + img_url)
     } 
     
     let sqlInserts = [postId, content, author_id, img_url];
-    console.log('Post controller, sqlInserts: ' + sqlInserts)
-
 
     postModels.updatePost(sqlInserts)
     .then((response) => {
-        res.status(201).json(JSON.stringify(response));
+        if (response.old_url != null) {
+            console.log('I have old picture to delete');
+            const filename = response.old_url.split(/images/)[1];
+            fs.unlink(`images${filename}`, (err) => {
+                if (err) throw err;
+            })
+            res.status(201).json(JSON.stringify(response));
+        } else {
+            console.log('I dont have old picture to delete')
+            res.status(201).json(JSON.stringify(response));
+        }
     })
     .catch((error) => {
         console.log(error);
