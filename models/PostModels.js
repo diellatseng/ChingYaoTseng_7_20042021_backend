@@ -23,6 +23,7 @@ class PostModels {
         return new Promise((resolve, reject) => {
             connectdb.query(sql, function (err, result, fields) {
                 if (err) reject(err);
+                console.log(result)
                 resolve(result)
             });
         })

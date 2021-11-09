@@ -7,8 +7,8 @@ const UserModels = require('../Models/UserModels.js')
 let userModels = new UserModels();
 
 exports.register = (req, res, next) => {
-    let full_name = req.body.full_name;
-    let email = req.body.email;
+    let full_name = req.body.full_name;                                     //Future imporove: add validation
+    let email = req.body.email;                                             //Future imporove: add validation
     let password = req.body.password;
     if (/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,255}$/.test(req.body.password)) {
         bcrypt.hash(password, 10)
