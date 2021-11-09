@@ -60,14 +60,14 @@ exports.updatePost = (req, res, next) => {
     postModels.updatePost(sqlInserts)
         .then((response) => {
             if (response.old_url != null) {
-                console.log('I have old picture to delete');
+                // Delete old image from server
                 const filename = response.old_url.split(/images/)[1];
                 fs.unlink(`images${filename}`, (err) => {
                     if (err) console.log(err);
                 })
                 res.status(201).json(JSON.stringify(response));
             } else {
-                console.log('I dont have old picture to delete')
+                // No image to delete
                 res.status(201).json(JSON.stringify(response));
             }
         })
@@ -84,11 +84,10 @@ exports.deletePost = async (req, res, next) => {
     // Delete the post(data row) from database
     await postModels.deletePost(sqlInsert)
         .then((result) => {
-            console.log(JSON.stringify(result.img_url));
             return result.img_url
         })
         .then((img_url) => {
-            console.log('enter to 2nd then: ' + img_url);
+            // If the post has an image, delete it from server
             if (img_url !== '') {
                 const filename = img_url.split(/images/)[1];
                 fs.unlink(`images${filename}`, (err) => {

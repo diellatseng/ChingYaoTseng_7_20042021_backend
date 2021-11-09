@@ -4,8 +4,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 class UserModels {
-
-    // Functions using traditional way to query database
     register(sqlInserts) {
         let sql = 'INSERT INTO user (`full_name`, `email`, `password`) VALUES( ?, ?, ?)';
         sql = mysql.format(sql, sqlInserts);
@@ -69,18 +67,6 @@ class UserModels {
             })
         })
     }
-
-    // updateUser(sqlInserts){
-    //     let sql = 'UPDATE users SET firstName = ?, lastName = ?, email = ? WHERE id = ?';
-    //     sql = mysql.format(sql,sqlInserts);
-    //     return new Promise((resolve, reject) =>{
-    //         connectdb.query(sql, function(err, result){
-    //             if (err) return reject({error : 'fonction indisponible'});
-    //             resolve({message : 'Informations mises à jour !'});
-    //         }) 
-
-    //     })
-    // }
 }
 
 module.exports = UserModels;
